@@ -3,54 +3,28 @@
 \usepackage{tabularx}
 \usepackage{booktabs}
 
-\title{Problem Statement and Goals\\\progname}
+\title{Problem Statement and Goals -  Gaussian Mixture Model}
 
-\author{\authname}
+\author{Wong, Kim Ying}
 
-\date{}
+\date{19 Jan 2024}
 
-\input{../Comments}
-\input{../Common}
 
 \begin{document}
 
 \maketitle
 
-\begin{table}[hp]
-\caption{Revision History} \label{TblRevisionHistory}
-\begin{tabularx}{\textwidth}{llX}
-\toprule
-\textbf{Date} & \textbf{Developer(s)} & \textbf{Change}\\
-\midrule
-Date1 & Name(s) & Description of changes\\
-Date2 & Name(s) & Description of changes\\
-... & ... & ...\\
-\bottomrule
-\end{tabularx}
-\end{table}
-
-\section{Problem Statement}
-
-\wss{You should check your problem statement with the
-\href{https://github.com/smiths/capTemplate/blob/main/docs/Checklists/ProbState-Checklist.pdf}
-{problem statement checklist}.}
-\wss{You can change the section headings, as long as you include the required information.}
 
 \subsection{Problem}
-
+Gaussian mixture model is one of the most important model in unsupervised clustering. Many software provide its implementation but with 
+We implement a Gaussian mixture model for clustering based on EM algorithm. Given a certain dataset with labeled observations, the software should be able to clusters the data points into the categories that they belongs to in an ideal case. 
 \subsection{Inputs and Outputs}
-
-\wss{Characterize the problem in terms of ``high level'' inputs and outputs.  
-Use abstraction so that you can avoid details.}
+The input of the software will be observations (only predictors without the labels) in the dataset, assumed that it should be arrays or matrices. The output of the software should be an array of the predicted labels and could be verified with the given labels in dataset.
 
 \subsection{Stakeholders}
-
+The software can serve primarily as a tool for data scientists and researchers in the field of statistical learning. It provides a simple and fast implementation in Gaussian mixture model and could also facilitates  
 \subsection{Environment}
-
-\wss{Hardware and software}
-
-\section{Goals}
-
-\section{Stretch Goals}
-
+We aim at a portable software, which could be operated in any OS and any hardware. No software or extra libraries should be needed in an ideal case, while if the computational or development cost is too high, some external but common libraries in linear algebra or statistical method will be utilized.
+\subsection{Goal}
+Our goal is to provide a user-friendly, fast and robust software in implementing Gaussian mixture model. The software would be compared to some current libraries for statistical learning. These software will serve as a benchmark in terms of the accuracy and performance.
 \end{document}
