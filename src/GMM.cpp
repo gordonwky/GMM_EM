@@ -1,128 +1,243 @@
 #include <iostream>
-#include <eigen-3.4.0/Eigen/Dense>
+#include <Eigen/Dense>
+// #include <Eigen/Dense>
 #include <vector>
-#include <fstream>
+#include <random>
+#include <cmath>
+#include <string>
+#include "GMM.h"
+
+// #include "KMeans.h"
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
-MatrixXd &read_csv(const std::string &filename)
+GMM::GMM()
 {
-
-    std::ifstream file(filename);
-    std::vector<std::vector<double>> data;
-    std::string line;
-
-    while (std::getline(file, line))
-    {
-        std::vector<double> row;
-        std::stringstream ss(line);
-        std::string cell;
-
-        while (std::getline(ss, cell, ','))
-        {
-            row.push_back(std::stod(cell));
-        }
-
-        data.push_back(row);
-    }
-
-    int rows = data.size();
-    int cols = data[0].size();
-    MatrixXd matrix(rows, cols);
-
-    for (int i = 0; i < rows; i++)
-    {
-        for (int j = 0; j < cols; j++)
-        {
-            matrix(i, j) = data[i][j];
-        }
-    }
-
-    return matrix;
+    // default constructor
+    this->numComponents = 2;
+    this->max_iter = 10;
+    this->tol = 1e-2;
+    this->numData = 0;
+    // this->mean_vector = std::vector<VectorXd>(numComponents);
+    // this->mixing_coefficients = std::vector<int>(numComponents);
+    // this->cov_matrices = std::vector<MatrixXd>(numComponents);
 }
 
-MatrixXd &computing_normal_distribution_pdf(const int N, const int K, const std::vector<VectorXd> &data, const std::vector<VectorXd> &mean_vector, const std::vector<MatrixXd> &cov_vector)
+GMM::GMM(int numComponents, int max_iter, double tol, std::string init_method)
+{
+    // constructor
+    this->numComponents = numComponents;
+    this->max_iter = max_iter;
+    this->tol = tol;
+    this->numData = 0;
+    this->init_method = init_method;
+    // this->mean_vector = std::vector<VectorXd>(numComponents);
+    // this->mixing_coefficients = std::vector<double>(numComponents);
+    // this->cov_matrices = std::vector<MatrixXd>(numComponents);
+}
+
+void GMM::initiate(const std::vector<VectorXd> &data)
+{
+    this->numData = data.size();
+    this->dimData = data[0].size();
+
+    this->responbilities = MatrixXd::Zero(numData, numComponents);
+    if (init_method == "random")
+    {
+        this->mixing_coefficients = std::vector<double>(numComponents, static_cast<double>(1) / numComponents);
+        for (int j = 0; j < re_initialize_count; j++)
+        {
+            for (int i = 0; i < numComponents; i++)
+            {
+                std::random_device rd;
+                std::mt19937 gen(rd());
+                std::uniform_int_distribution<int> dist(0, numData - 1);
+                // select a random point as the first centroid
+                int random_guess = dist(gen);
+                MatrixXd cov = MatrixXd::Identity(dimData, dimData);
+                VectorXd mean = data[random_guess];
+                cov_matrices.push_back(cov);
+                mean_vector.push_back(mean);
+            }
+            this->normal_distribution_pdf = MatrixXd::Zero(numData, numComponents); // normal distribution pdf
+            this->likelihood = compute_log_likelihood(data);
+            if (std::isnan(likelihood) || std::isinf(likelihood))
+            {
+                std::cout << "Nan / Inf value in the likelihood" << std::endl;
+                cov_matrices.clear();
+                mean_vector.clear();
+                continue;
+            }
+            else
+            {
+                std::cout << "value in the likelihood " << likelihood << std::endl;
+                break;
+            }
+        }
+    }
+    else if (init_method == "kmeans")
+    {
+        KMeans kmeans(numComponents, 100);
+        kmeans.Initiate(data);
+        kmeans.fit(data);
+        std::vector<VectorXd> centroids = kmeans.get_mean_vector();
+        this->mixing_coefficients = kmeans.get_mixing_coefficients();
+        for (int i = 0; i < numComponents; i++)
+        {
+            MatrixXd cov = MatrixXd::Identity(dimData, dimData);
+            VectorXd mean = centroids[i];
+            cov_matrices.push_back(cov);
+            mean_vector.push_back(mean);
+        }
+        this->normal_distribution_pdf = MatrixXd::Zero(numData, numComponents); // normal distribution pdf
+        this->likelihood = compute_log_likelihood(data);
+    }
+    else
+    {
+        throw "Invalid initialization method";
+    }
+
+    // computing_normal_distribution_pdf(data);
+}
+
+void GMM::computing_normal_distribution_pdf(const std::vector<VectorXd> &data)
 {
     // matrix for the normal distribution pdf Nnk
-    MatrixXd Nnk(N, K);
-    for (size_t i = 0; i < N; i++)
+
+    double sqrt_2pi_pow_n = pow(2 * M_PI, numData / 2.0);
+
+    for (size_t j = 0; j < numComponents; j++)
     {
-        VectorXd x = data[i];
-        for (size_t j = 0; j < K; j++)
+        MatrixXd inv_cov = cov_matrices[j].inverse();
+        VectorXd mean = mean_vector[j];
+        double det = cov_matrices[j].determinant();
+        for (size_t i = 0; i < numData; i++)
         {
-            MatrixXd cov = cov_vector[j];
-            VectorXd mean = mean_vector[j];
-            double det = cov.determinant();
-            double coeff = 1.0 / (pow(2 * M_PI, N / 2.0) * sqrt(det));
+            VectorXd x = data[i];
+            double coeff = 1.0 / (sqrt_2pi_pow_n * sqrt(det));
             VectorXd diff = x - mean;
-            MatrixXd inv_cov = cov.inverse();
             double exponent = -0.5 * (diff.transpose() * inv_cov * diff).trace();
-            Nnk(i, j) = coeff * exp(exponent);
+            normal_distribution_pdf(i, j) = coeff * exp(exponent);
         }
     }
-    return Nnk;
 }
 
-double compute_log_likelihood(const std::vector<VectorXd> &data, const std::vector<VectorXd> &mean_vectors, const std::vector<MatrixXd> &cov_matrices, const std::vector<VectorXd> &mixing_coefficients)
+void GMM::E_step(const std::vector<VectorXd> &data)
 {
-    int K = mean_vectors.size();
-    int N = mean_vectors[0].size();
-    int num_samples = data.size();
-    double log_likelihood = 0.0;
+    // update the responsibilities
 
-    for (int i = 0; i < num_samples; i++)
+    // MatrixXd
+
+    for (int i = 0; i < numData; i++)
     {
-        double sample_likelihood = 0.0;
-
-        for (int j = 0; j < K; j++)
+        for (int j = 0; j < numComponents; j++)
         {
-            double component_likelihood = mixing_coefficients[j](0) * computing_normal_distribution_pdf(data[i], mean_vectors[j], cov_matrices[j]);
-            sample_likelihood += component_likelihood;
-        }
+            double numerator = mixing_coefficients[j] * normal_distribution_pdf(i, j);
+            double denominator = 0.0;
 
-        log_likelihood += log(sample_likelihood);
-    }
+            for (int k = 0; k < numComponents; k++)
+            {
+                denominator += mixing_coefficients[k] * normal_distribution_pdf(i, k);
+            }
 
-    return log_likelihood;
-}
-
-MatrixXd &computing_responbilities_E_step()
-{
-    MatrixXd responbilities;
-
-    for (size_t i = 0; i < K; i++)
-    {
-
-        for (size_t j = 0; j < N; j++)
-        {
+            responbilities(i, j) = numerator / denominator;
         }
     }
-    return responbilities;
 }
 
-void Update_M_step(const std::vector<VectorXd> &mean_vectors, const std::vector<MatrixXd> &cov_matrices, const std::vector<VectorXd> &mixing_coefficients)
+void GMM::M_step(const std::vector<VectorXd> &data)
 {
     // update the mean vectors, covariance matrices and mixing coefficients based on responbilities
-}
-void initiate(int K, int N, const std::vector<VectorXd> &data)
-{
-    std::vector<VectorXd> mean_vectors_vector;
-    std::vector<MatrixXd> cov_matrices_vector;
-    VectorXd mixing_coefficient = VectorXd::Constant(K, static_cast<double>(1 / K));
-    for (int i = 0; i < K; i++)
-    {
 
-        MatrixXd cov_matrix = MatrixXd::Identity(N, N);
-        VectorXd mean_vector = VectorXd::Random(N);
-        cov_matrices_vector.push_back(cov_matrix);
-        mean_vectors_vector.push_back(mean_vector);
+    for (int i = 0; i < numComponents; i++)
+    {
+        VectorXd updated_mean_vector = VectorXd::Zero(dimData);
+        MatrixXd updated_cov_matrix = MatrixXd::Zero(dimData, dimData);
+        double Nk = 0.0;
+
+        for (int j = 0; j < numData; j++)
+        {
+            Nk += responbilities(j, i);
+            updated_mean_vector += responbilities(j, i) * data[j];
+        }
+
+        updated_mean_vector /= Nk;
+        mean_vector[i] = updated_mean_vector;
+
+        for (int j = 0; j < numData; j++)
+        {
+            VectorXd diff = data[j] - updated_mean_vector;
+            updated_cov_matrix += responbilities(j, i) * diff * diff.transpose();
+        }
+
+        updated_cov_matrix /= Nk;
+        cov_matrices[i] = updated_cov_matrix + MatrixXd::Identity(dimData, dimData) * 1e-3; // regularization term
+        mixing_coefficients[i] = Nk / numData;
     }
 }
 
-int main()
+void GMM::fit(const std::vector<VectorXd> &data)
 {
+    initiate(data);
+    double new_likelihood = 0;
+    for (int i = 0; i < max_iter; i++)
+    {
+        E_step(data);
+        M_step(data);
+        new_likelihood = compute_log_likelihood(data);
+        if (abs(likelihood - new_likelihood) < tol)
+        {
+            break;
+        }
+        likelihood = new_likelihood;
+        // std::cout << "Iteration: " << i << " Log Likelihood: " << likelihood << std::endl;
+    }
+    fitted = true;
+}
 
-    MatrixXd A = read_csv("iris.csv");
-    std::cout << A << std::endl;
-    return 0;
+std::vector<int> GMM::predict()
+{
+    try
+    {
+        if (!fitted)
+        {
+            throw std::runtime_error("The model has not been fitted yet!");
+        }
+    }
+    catch (const std::exception &e)
+    {
+        std::cerr << e.what() << std::endl;
+    }
+    std::vector<int> labels(numData);
+    for (int i = 0; i < numData; i++)
+    {
+        double max_responsibility = 0.0;
+        int label = 0;
+        for (int j = 0; j < numComponents; j++)
+        {
+            if (responbilities(i, j) > max_responsibility)
+            {
+                max_responsibility = responbilities(i, j);
+                label = j;
+            }
+        }
+        labels[i] = label;
+    }
+    return labels;
+}
+
+double GMM::compute_log_likelihood(const std::vector<VectorXd> &data)
+{
+    double log_likelihood = 0.0;
+    computing_normal_distribution_pdf(data);
+    for (int i = 0; i < numData; i++)
+    {
+        double sum = 0.0;
+        for (int j = 0; j < numComponents; j++)
+        {
+            sum += mixing_coefficients[j] * normal_distribution_pdf(i, j);
+        }
+        log_likelihood += log(sum);
+    }
+    return log_likelihood;
 }

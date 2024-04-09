@@ -69,6 +69,10 @@
         "algorithm": "cpp",
         "fstream": "cpp",
         "iomanip": "cpp",
-        "stack": "cpp"
+        "stack": "cpp",
+        "dense": "cpp",
+        "filesystem": "cpp",
+        "any": "cpp",
+        "condition_variable": "cpp"
     }
 }
