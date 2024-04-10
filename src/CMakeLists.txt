@@ -17,6 +17,7 @@ message(STATUS "Eigen include directory: ${EIGEN3_INCLUDE_DIRS}")
 set(SOURCES
     GMM.cpp
     KMeans.cpp
+    
 )
 
 # Add headers

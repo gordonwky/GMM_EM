@@ -1,0 +1,2 @@
+/Users/kimyingwong/anaconda3/bin/ar qc libMyGMM.a CMakeFiles/MyGMM.dir/src/GMM.cpp.o CMakeFiles/MyGMM.dir/src/KMeans.cpp.o
+/Users/kimyingwong/anaconda3/bin/ranlib libMyGMM.a
