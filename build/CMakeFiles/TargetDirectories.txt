@@ -1,4 +1,0 @@
-/Users/kimyingwong/GMM_EM/build/CMakeFiles/MyGMM.dir
-/Users/kimyingwong/GMM_EM/build/CMakeFiles/my_test.dir
-/Users/kimyingwong/GMM_EM/build/CMakeFiles/edit_cache.dir
-/Users/kimyingwong/GMM_EM/build/CMakeFiles/rebuild_cache.dir

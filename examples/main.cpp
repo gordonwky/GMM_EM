@@ -1,4 +1,6 @@
 #include "GMM.h"
+#include "input.h"
+#include "output.h"
 #include <Eigen/Dense>
 #include <fstream>
 #include <iostream>
@@ -23,25 +25,27 @@ int main() {
   // data.push_back(VectorXd(2));
   // data[6] << 11, 12;
 
-  std::vector<VectorXd> data;
-  std::ifstream file("/Users/kimyingwong/GMM_EM/dataset/iris.csv");
-  std::string line;
+  // std::vector<VectorXd> data;
 
-  while (std::getline(file, line)) {
-    std::vector<double> row;
-    std::stringstream ss(line);
-    std::string cell;
+  std::vector<VectorXd> data = csv_to_data("../dataset/iris.csv");
+  // std::ifstream file("/Users/kimyingwong/GMM_EM/dataset/iris.csv");
+  // std::string line;
 
-    while (std::getline(ss, cell, ',')) {
-      row.push_back(std::stod(cell));
-    }
+  // while (std::getline(file, line)) {
+  //   std::vector<double> row;
+  //   std::stringstream ss(line);
+  //   std::string cell;
 
-    VectorXd vec(row.size());
-    for (size_t i = 0; i < row.size(); i++) {
-      vec(i) = row[i];
-    }
-    data.push_back(vec);
-  }
+  //   while (std::getline(ss, cell, ',')) {
+  //     row.push_back(std::stod(cell));
+  //   }
+
+  //   VectorXd vec(row.size());
+  //   for (size_t i = 0; i < row.size(); i++) {
+  //     vec(i) = row[i];
+  //   }
+  //   data.push_back(vec);
+  // }
 
   GMM gmm(3, 100, 1e-2, "kmeans");
   // gmm.initiate(data);
@@ -50,6 +54,7 @@ int main() {
   // std::cout
   //     << gmm.responbilities << std::endl;
   std::vector<int> label = gmm.predict();
+  writeLabelsToCSV(label, "../test_lables.csv");
   // std::cout << "Labels: " << std::endl;
   // for (const auto &l : label)
   // {
@@ -69,16 +74,17 @@ int main() {
   //     std::cout << coef << std::endl;
   // }
   // Test case 2
-  std::ofstream outputFile("../dataset/test_lables.csv");
-  if (outputFile.is_open()) {
-    outputFile << "labels" << "," << "\n";
-    for (const auto &l : label) {
-      outputFile << l << "," << "\n";
-    }
-    outputFile.close();
-    std::cout << "Labels saved to labels.csv" << std::endl;
-  } else {
-    std::cout << "Unable to open file" << std::endl;
-  }
+
+  // std::ofstream outputFile("test_lables.csv");
+  // if (outputFile.is_open()) {
+  //   outputFile << "labels" << "," << "\n";
+  //   for (const auto &l : label) {
+  //     outputFile << l << "," << "\n";
+  //   }
+  //   outputFile.close();
+  //   std::cout << "Labels saved to labels.csv" << std::endl;
+  // } else {
+  //   std::cout << "Unable to open file" << std::endl;
+  // }
   return 0;
 }

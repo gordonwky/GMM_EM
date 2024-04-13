@@ -1,7 +1,8 @@
-#include <iostream>
-#include <eigen-3.4.0/Eigen/Dense> // #include <Eigen/Dense>
-#include <vector>
+#include <Eigen/Dense> // #include <Eigen/Dense>
 #include <fstream>
+#include <iostream>
+#include <vector>
 
 // Function declarations
-void writeLabelsToCSV(const std::vector<int> &labels, const std::string &filename);
+void writeLabelsToCSV(const std::vector<int> &labels,
+                      const std::string &filename);
