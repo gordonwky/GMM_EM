@@ -69,28 +69,28 @@ include CMakeFiles/test_my_program.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/test_my_program.dir/flags.make
 
-CMakeFiles/test_my_program.dir/main.cpp.o: CMakeFiles/test_my_program.dir/flags.make
-CMakeFiles/test_my_program.dir/main.cpp.o: /Users/kimyingwong/GMM_EM/test/main.cpp
-CMakeFiles/test_my_program.dir/main.cpp.o: CMakeFiles/test_my_program.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/kimyingwong/GMM_EM/test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/test_my_program.dir/main.cpp.o"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_my_program.dir/main.cpp.o -MF CMakeFiles/test_my_program.dir/main.cpp.o.d -o CMakeFiles/test_my_program.dir/main.cpp.o -c /Users/kimyingwong/GMM_EM/test/main.cpp
+CMakeFiles/test_my_program.dir/test.cpp.o: CMakeFiles/test_my_program.dir/flags.make
+CMakeFiles/test_my_program.dir/test.cpp.o: /Users/kimyingwong/GMM_EM/test/test.cpp
+CMakeFiles/test_my_program.dir/test.cpp.o: CMakeFiles/test_my_program.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/kimyingwong/GMM_EM/test/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/test_my_program.dir/test.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/test_my_program.dir/test.cpp.o -MF CMakeFiles/test_my_program.dir/test.cpp.o.d -o CMakeFiles/test_my_program.dir/test.cpp.o -c /Users/kimyingwong/GMM_EM/test/test.cpp
 
-CMakeFiles/test_my_program.dir/main.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test_my_program.dir/main.cpp.i"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/kimyingwong/GMM_EM/test/main.cpp > CMakeFiles/test_my_program.dir/main.cpp.i
+CMakeFiles/test_my_program.dir/test.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/test_my_program.dir/test.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/kimyingwong/GMM_EM/test/test.cpp > CMakeFiles/test_my_program.dir/test.cpp.i
 
-CMakeFiles/test_my_program.dir/main.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_my_program.dir/main.cpp.s"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/kimyingwong/GMM_EM/test/main.cpp -o CMakeFiles/test_my_program.dir/main.cpp.s
+CMakeFiles/test_my_program.dir/test.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/test_my_program.dir/test.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/kimyingwong/GMM_EM/test/test.cpp -o CMakeFiles/test_my_program.dir/test.cpp.s
 
 # Object files for target test_my_program
 test_my_program_OBJECTS = \
-"CMakeFiles/test_my_program.dir/main.cpp.o"
+"CMakeFiles/test_my_program.dir/test.cpp.o"
 
 # External object files for target test_my_program
 test_my_program_EXTERNAL_OBJECTS =
 
-test_my_program: CMakeFiles/test_my_program.dir/main.cpp.o
+test_my_program: CMakeFiles/test_my_program.dir/test.cpp.o
 test_my_program: CMakeFiles/test_my_program.dir/build.make
 test_my_program: /opt/homebrew/lib/libgtest.a
 test_my_program: /opt/homebrew/lib/libgtest_main.a

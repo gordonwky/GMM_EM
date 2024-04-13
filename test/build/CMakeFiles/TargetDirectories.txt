@@ -1,3 +1,4 @@
 /Users/kimyingwong/GMM_EM/test/build/CMakeFiles/test_my_program.dir
+/Users/kimyingwong/GMM_EM/test/build/CMakeFiles/test.dir
 /Users/kimyingwong/GMM_EM/test/build/CMakeFiles/edit_cache.dir
 /Users/kimyingwong/GMM_EM/test/build/CMakeFiles/rebuild_cache.dir
