@@ -11,8 +11,11 @@ y = iris.target
 gmm= GaussianMixture(n_components=3, random_state=0)
 # gmm = GMM(n_components=3)
 gmm.fit(X)
+gmm.score(X, y=None)
 # Predict the labels
 y_pred = gmm.predict(X)
+y_pred = pd.DataFrame(y_pred)  # Convert numpy array to pandas DataFrame
+y_pred.to_csv('/Users/kimyingwong/GMM_EM/dataset/sklean_iris_label.csv', header=False, index=False)
 # Plot the predicted labels
 
 pred = pd.read_csv('/Users/kimyingwong/GMM_EM/dataset/testing.csv')

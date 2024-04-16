@@ -282,5 +282,7 @@ TSWLatexianTemp*
 # ignore all build directories
 build/
 
+**/build/
+
 #ignore vscode settings
 .vscode/

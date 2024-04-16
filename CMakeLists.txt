@@ -4,7 +4,7 @@ project(MyGMM)
 # Set the C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
-add_compile_options(-Wall -Wextra -Wpedantic -g -O2)
+add_compile_options(-Wall -Wextra -Wpedantic -g -O2 )
 
 # Find Eigen library
 find_package(Eigen3 REQUIRED)
@@ -29,17 +29,25 @@ add_executable(my_example ${PROJECT_SOURCE_DIR}/examples/main.cpp)
 
 target_link_libraries(my_example MyGMM)
 
+include(FetchContent)
+
+FetchContent_Declare(
+    googletest
+    GIT_REPOSITORY https://github.com/google/googletest.git
+    GIT_TAG release-1.11.0
+)
+FetchContent_MakeAvailable(googletest)
 
 # Link the library Gtest
 # find_package(GTest CONFIG REQUIRED) 
-# add_executable(test_gmm ${PROJECT_SOURCE_DIR}/test/test.cpp)
+add_executable(test_gmm ${PROJECT_SOURCE_DIR}/test/gmm_test.cpp)
 
-# target_link_libraries( test_gmm GTest::gtest GTest::gtest_main) 
-# target_link_libraries( test_gmm GTest::gtest GTest::gtest_main) 
-# include_directories(${GTEST_INCLUDE_DIRS})
+target_link_libraries( test_gmm gtest gtest_main MyGMM) 
+# # target_link_libraries( test_gmm GTest::gtest GTest::gtest_main) 
+# # include_directories(${GTEST_INCLUDE_DIRS})
 
-# enable_testing()
-# add_test(test_arithmetic1 test_gmm)
+enable_testing()
+add_test(test_csv test_gmm)
 
 # # Add test executable
 
