@@ -49,8 +49,3 @@ TEST(CSVToDataTest, EmptyCSV) {
   std::string file_path = "../test/empty.csv";
   EXPECT_THROW(csv_to_data(file_path), std::invalid_argument);
 }
-
-int main(int argc, char **argv) {
-  testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}

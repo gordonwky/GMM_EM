@@ -98,14 +98,7 @@ void KMeans::fit(const std::vector<VectorXd> &data) {
   }
   this->mixing_coefficients = std::vector<double>(numClusters);
   for (int i = 0; i < numClusters; i++) {
-    // cout number in each cluster
-    // std::cout << "Cluster " << i << " size: " <<
-    // static_cast<double>(clusters[i].size()) /
-    // static_cast<double>(data.size()) << std::endl; for (int j = 0; j <
-    // clusters[i].size(); j++)
-    // {
-    //     std::cout << clusters[i][j] << std::endl;
-    // }
+
     mixing_coefficients[i] = static_cast<double>(clusters[i].size()) /
                              static_cast<double>(data.size());
   }

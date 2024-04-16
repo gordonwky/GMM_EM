@@ -9,8 +9,18 @@ Therefore, it can be used in various cases in machine learning, such as clusteri
 
 The folders and files for this project are as follows:
 
-docs - Documentation for the project
+docs - Documentation for the project \newline 
+
 refs - Reference material used for the project, including papers
-src - Source code
+
+src - Source code (cpp file)
+
+include - Source code (header file)
+
 test - Test cases
-etc.
+
+dataset - Test dataset
+
+example - running example code and visualization for result
+
+## Compile

@@ -1,3 +1,4 @@
+#include "output.h"
 #include <Eigen/Dense>
 #include <fstream>
 #include <gtest/gtest.h>
@@ -23,4 +24,11 @@ TEST(WriteLabelsToCSVTest, ValidLabels) {
     std::getline(file, line);
     EXPECT_EQ(std::stoi(line), l);
   }
+}
+
+TEST(WriteLabelsToCSVTest, InvalidPath) {
+  // Provide a path to your test CSV file
+  std::string file_path = "../dsds";
+  std::vector<int> labels = {1, 2, 3, 4, 5};
+  EXPECT_THROW(writeLabelsToCSV(labels, file_path), std::invalid_argument);
 }

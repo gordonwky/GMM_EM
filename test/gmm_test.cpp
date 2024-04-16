@@ -148,7 +148,7 @@ TEST(Prediction, NoFitPrediction) {
 }
 
 TEST(Prediction, PostiveIntPrediction) {
-  int numComponents = 3;
+  int numComponents = 2;
   GMM gmm(numComponents, 100, 1e-2, "kmeans");
   std::vector<VectorXd> data;
   data.push_back(VectorXd(1));
@@ -156,9 +156,9 @@ TEST(Prediction, PostiveIntPrediction) {
   data.push_back(VectorXd(1));
   data[1] << 2.0;
   data.push_back(VectorXd(1));
-  data[2] << 3.0;
+  data[2] << 5.0;
   data.push_back(VectorXd(1));
-  data[3] << 4.0;
+  data[3] << 6.0;
   gmm.fit(data);
   std::vector<int> labels = gmm.predict();
   for (size_t i = 0; i < labels.size(); i++) {
