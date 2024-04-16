@@ -19,6 +19,9 @@ gmm.fit(pd.DataFrame(scaler.fit_transform(X)))
 # print(gmm.means_)
 # Predict the labels
 y_pred = gmm.predict(pd.DataFrame(scaler.fit_transform(X)))
+y_pred = pd.DataFrame(y_pred)  # Convert numpy array to pandas DataFrame
+y_pred.to_csv('/Users/kimyingwong/GMM_EM/dataset/sklean_breast_label.csv', header=False, index=False)
+
 # Plot the predicted labels
 
 pred_csv = pd.read_csv('/Users/kimyingwong/GMM_EM/dataset/breast_labels.csv')
@@ -45,7 +48,7 @@ plt.tight_layout()
 
 # Show the plots
 plt.show()
-# print(confusion_matrix(pred, y_pred))
+print(confusion_matrix(pred, y_pred))
 
 
 

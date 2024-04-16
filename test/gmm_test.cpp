@@ -116,4 +116,73 @@ TEST(Likelihood, LikelihoodTest) {
   EXPECT_LE(abs(likelihood - (-8.827560617423226)), 1e-2);
 }
 
-TEST(NormalDistribution, NormalDistributionTest) {}
+TEST(NormalDistribution, NormalDistributionTest) {
+  std::vector<VectorXd> data;
+  data.push_back(VectorXd(1));
+  data[0] << 1.0;
+  data.push_back(VectorXd(1));
+  data[1] << 2.0;
+  data.push_back(VectorXd(1));
+  data[2] << 3.0;
+  GMM gmm(1, 100, 1e-2, "kmeans");
+  gmm.fit(data);
+  std::cout << "Mean: " << gmm.mean_vector[0] << std::endl;
+  std::cout << "\n Cov: " << gmm.cov_matrices[0] << std::endl;
+  gmm.computing_normal_distribution_pdf(data);
+  std::cout << "Normal Distribution PDF: " << gmm.normal_distribution_pdf
+            << std::endl;
+  std::vector<double> expected_output = {0.23079948, 0.48860251, 0.23079948};
+  std::cout << gmm.normal_distribution_pdf.cols()
+            << gmm.normal_distribution_pdf.rows() << std::endl;
+  for (size_t i = 0; i < 3; i++) {
+    printf("Expected: %f, Actual: %f\n", expected_output[i],
+           gmm.normal_distribution_pdf(i, 0));
+    EXPECT_LE(abs(gmm.normal_distribution_pdf(i, 0) - expected_output[i]),
+              1e-2);
+  }
+}
+
+TEST(Prediction, NoFitPrediction) {
+  GMM gmm(1, 100, 1e-2, "kmeans");
+  EXPECT_THROW(gmm.predict(), std::runtime_error);
+}
+
+TEST(Prediction, PostiveIntPrediction) {
+  int numComponents = 3;
+  GMM gmm(numComponents, 100, 1e-2, "kmeans");
+  std::vector<VectorXd> data;
+  data.push_back(VectorXd(1));
+  data[0] << 1.0;
+  data.push_back(VectorXd(1));
+  data[1] << 2.0;
+  data.push_back(VectorXd(1));
+  data[2] << 3.0;
+  data.push_back(VectorXd(1));
+  data[3] << 4.0;
+  gmm.fit(data);
+  std::vector<int> labels = gmm.predict();
+  for (size_t i = 0; i < labels.size(); i++) {
+    // std::cout << labels[i] << std::endl;
+    EXPECT_GT(labels[i], 0);
+  }
+  std::set<int> uniqueElements(labels.begin(), labels.end());
+  EXPECT_EQ(numComponents, uniqueElements.size());
+}
+
+TEST(Prediction, ClusterEqGtDateSize) {
+  // Test if the number of clusters is greater than or equal to the number of
+  // data points
+  int numComponents = 4;
+  GMM gmm(numComponents, 100, 1e-2, "kmeans");
+  std::vector<VectorXd> data;
+  data.push_back(VectorXd(1));
+  data[0] << 1.0;
+  data.push_back(VectorXd(1));
+  data[1] << 2.0;
+  data.push_back(VectorXd(1));
+  data[2] << 3.0;
+  data.push_back(VectorXd(1));
+  data[3] << 4.0;
+
+  EXPECT_THROW(gmm.fit(data), std::runtime_error);
+}

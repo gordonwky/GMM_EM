@@ -73,6 +73,10 @@
         "dense": "cpp",
         "filesystem": "cpp",
         "any": "cpp",
-        "condition_variable": "cpp"
+        "condition_variable": "cpp",
+        "core": "cpp",
+        "forward_list": "cpp",
+        "list": "cpp",
+        "unordered_set": "cpp"
     }
 }

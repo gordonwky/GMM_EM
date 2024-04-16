@@ -35,6 +35,14 @@ GMM::GMM(int numComponents, int max_iter, double tol, std::string init_method) {
 }
 
 void GMM::initiate(const std::vector<VectorXd> &data) {
+
+  if (data.size() == 0) {
+    throw std::runtime_error("Dataset is empty to initiate!");
+  }
+  if (numComponents >= data.size()) {
+    throw std::runtime_error("Number of components is greater than or equal "
+                             "to the number of data points!");
+  }
   this->numData = data.size();
   this->dimData = data[0].size();
 
@@ -85,15 +93,14 @@ void GMM::initiate(const std::vector<VectorXd> &data) {
   } else {
     throw "Invalid initialization method";
   }
-
-  // computing_normal_distribution_pdf(data);
 }
+// computing_normal_distribution_pdf(data);
 
 void GMM::computing_normal_distribution_pdf(const std::vector<VectorXd> &data) {
   // matrix for the normal distribution pdf Nnk
 
-  double sqrt_2pi_pow_n = pow(2 * M_PI, numData / 2.0);
-
+  double sqrt_2pi_pow_n = pow(2 * M_PI, dimData / 2.0);
+  // printf("sqrt_2pi_pow_n: %f\n", sqrt_2pi_pow_n);
   for (int j = 0; j < numComponents; j++) {
     MatrixXd inv_cov = cov_matrices[j].inverse();
     VectorXd mean = mean_vector[j];
@@ -108,7 +115,7 @@ void GMM::computing_normal_distribution_pdf(const std::vector<VectorXd> &data) {
   }
 }
 
-void GMM::E_step(const std::vector<VectorXd> &data) {
+void GMM::E_step() {
   // update the responsibilities
 
   // MatrixXd
@@ -159,37 +166,37 @@ void GMM::M_step(const std::vector<VectorXd> &data) {
 
 void GMM::fit(const std::vector<VectorXd> &data) {
   initiate(data);
+
   double new_likelihood = 0;
   for (int i = 0; i < max_iter; i++) {
-    E_step(data);
+    E_step();
     M_step(data);
     new_likelihood = compute_log_likelihood(data);
+    if (std::isnan(new_likelihood) || std::isinf(new_likelihood)) {
+      throw std::invalid_argument("The model is not going to converge");
+      break;
+    }
     if (abs(likelihood - new_likelihood) < tol) {
       break;
     }
     likelihood = new_likelihood;
-    // std::cout << "Iteration: " << i << " Log Likelihood: " << likelihood <<
-    // std::endl;
   }
   fitted = true;
 }
 
 std::vector<int> GMM::predict() {
-  try {
-    if (!fitted) {
-      throw std::runtime_error("The model has not been fitted yet!");
-    }
-  } catch (const std::exception &e) {
-    std::cerr << e.what() << std::endl;
+
+  if (!fitted) {
+    throw std::runtime_error("The model has not been fitted yet!");
   }
   std::vector<int> labels(numData);
   for (int i = 0; i < numData; i++) {
     double max_responsibility = 0.0;
-    int label = 0;
+    int label = 1;
     for (int j = 0; j < numComponents; j++) {
       if (responbilities(i, j) > max_responsibility) {
         max_responsibility = responbilities(i, j);
-        label = j;
+        label = j + 1;
       }
     }
     labels[i] = label;
