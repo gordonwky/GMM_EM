@@ -1,8 +1,7 @@
-#include <Eigen/Dense>
-#include <iostream>
-// #include <Eigen/Dense>
 #include "GMM.h"
+#include <Eigen/Dense>
 #include <cmath>
+#include <iostream>
 #include <random>
 #include <string>
 #include <vector>
@@ -17,6 +16,9 @@ GMM::GMM() {
   this->max_iter = 10;
   this->tol = 1e-2;
   this->numData = 0;
+  mean_vector.reserve(2);
+  cov_matrices.reserve(2);
+  mixing_coefficients.reserve(2);
   // this->mean_vector = std::vector<VectorXd>(numComponents);
   // this->mixing_coefficients = std::vector<int>(numComponents);
   // this->cov_matrices = std::vector<MatrixXd>(numComponents);
@@ -29,6 +31,9 @@ GMM::GMM(int numComponents, int max_iter, double tol, std::string init_method) {
   this->tol = tol;
   this->numData = 0;
   this->init_method = init_method;
+  mean_vector.reserve(numComponents);
+  cov_matrices.reserve(numComponents);
+  mixing_coefficients.reserve(numComponents);
   // this->mean_vector = std::vector<VectorXd>(numComponents);
   // this->mixing_coefficients = std::vector<double>(numComponents);
   // this->cov_matrices = std::vector<MatrixXd>(numComponents);
@@ -94,7 +99,6 @@ void GMM::initiate(const std::vector<VectorXd> &data) {
     throw "Invalid initialization method";
   }
 }
-// computing_normal_distribution_pdf(data);
 
 void GMM::computing_normal_distribution_pdf(const std::vector<VectorXd> &data) {
   // matrix for the normal distribution pdf Nnk
@@ -105,9 +109,11 @@ void GMM::computing_normal_distribution_pdf(const std::vector<VectorXd> &data) {
     MatrixXd inv_cov = cov_matrices[j].inverse();
     VectorXd mean = mean_vector[j];
     double det = cov_matrices[j].determinant();
+    double coeff = 1.0 / (sqrt_2pi_pow_n * sqrt(det));
+#pragma omp parallel for
     for (int i = 0; i < numData; i++) {
+
       VectorXd x = data[i];
-      double coeff = 1.0 / (sqrt_2pi_pow_n * sqrt(det));
       VectorXd diff = x - mean;
       double exponent = -0.5 * (diff.transpose() * inv_cov * diff).trace();
       normal_distribution_pdf(i, j) = coeff * exp(exponent);

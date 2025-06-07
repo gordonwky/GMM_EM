@@ -1,4 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
+
+set(CMAKE_C_COMPILER /opt/homebrew/bin/gcc-14)
+set(CMAKE_CXX_COMPILER /opt/homebrew/bin/g++-14)
+
 project(MyGMM)
 
 # Set the C++ standard
@@ -8,7 +12,7 @@ add_compile_options(-Wall -Wextra -Wpedantic -g -O2 )
 
 # Find Eigen library
 find_package(Eigen3 REQUIRED)
-
+find_package(OpenMP REQUIRED)
 # Add include directories for Eigen
 include_directories(${EIGEN3_INCLUDE_DIRS} ${PROJECT_SOURCE_DIR}/include)
 
@@ -21,13 +25,13 @@ set(HEADERS, ${PROJECT_SOURCE_DIR}/include/GMM.h ${PROJECT_SOURCE_DIR}/include/K
 add_library(MyGMM ${SOURCES} ${HEADERS})
 
 # Link Eigen library
-target_link_libraries(MyGMM Eigen3::Eigen)
-
+# target_link_libraries(MyGMM Eigen3::Eigen)
+target_link_libraries(MyGMM Eigen3::Eigen OpenMP::OpenMP_CXX)
 # Add your main executable
 
 add_executable(my_example ${PROJECT_SOURCE_DIR}/examples/main.cpp)
 
-target_link_libraries(my_example MyGMM)
+target_link_libraries(my_example MyGMM OpenMP::OpenMP_CXX)
 
 include(FetchContent)
 
@@ -44,9 +48,9 @@ add_executable(test_gmm ${PROJECT_SOURCE_DIR}/test/gmm_test.cpp)
 add_executable(test_input ${PROJECT_SOURCE_DIR}/test/Input_test.cpp)
 add_executable(test_output ${PROJECT_SOURCE_DIR}/test/Output_test.cpp)
 
-target_link_libraries( test_gmm gtest gtest_main MyGMM) 
-target_link_libraries( test_input gtest gtest_main MyGMM) 
-target_link_libraries( test_output gtest gtest_main MyGMM) 
+target_link_libraries(test_gmm gtest gtest_main MyGMM OpenMP::OpenMP_CXX)
+target_link_libraries(test_input gtest gtest_main MyGMM OpenMP::OpenMP_CXX)
+target_link_libraries(test_output gtest gtest_main MyGMM OpenMP::OpenMP_CXX)
 
 # # target_link_libraries( test_gmm GTest::gtest GTest::gtest_main) 
 # # include_directories(${GTEST_INCLUDE_DIRS})
